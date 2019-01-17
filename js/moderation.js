@@ -1,5 +1,7 @@
 const Discord = require("discord.js");
 const bot = new Discord.Client();
+const util = require('util');
+const setTimeoutPromise = util.promisify(setTimeout);
 var prefix = "1"
 var permError = "You do not have permission to run this Command!";
 
@@ -19,17 +21,16 @@ module.exports = {
 			switch (args[0].toLowerCase()) { //takes the prefix then adds the case to it whether capital or not?
 				case "kick":
           if (!message.member.roles.some(r=>["Admin", "Moderator"].includes(r.name)) ) { //Array.some() used to find roles allowed to use this command
-            delCmd
+            delCmd;
 						message.channel.send(new Discord.RichEmbed().setTitle("ERROR!").setDescription(permError).setColor(red)); // if not those roles it will throw this error
 					}
 					let member = message.mentions.members.first() || message.guild.members.get(args[0]); // grabs the member name
 					if (!member) { // if it can't find the mentioned name throw this error
 						delCmd;
-						//msg(new Discord.RichEmbed().setTitle("ERROR!").setDescription("User not found?").setColor(red));
 						message.channel.send(new Discord.RichEmbed().setTitle("ERROR!").setDescription("User not found?").setColor(red));
 					}
 					// If we can't kick the member then they have
-					if (!member.kickable) {
+					if (!member.kickable) { // KICKABLE not defined?
 						delCmd;
 						message.channel.send(new Discord.RichEmbed().setTitle("ERROR!").setDescription("I can't kick this User").setColor(red));
 					}
@@ -38,20 +39,22 @@ module.exports = {
 					let goodbye = member.send(new Discord.RichEmbed().setTitle("You were kicked from Drunk Squad Gaming").setDescription(`${message.author.toString()} KICKED YOU FOR "${reason}"`).setColor(red));
 					if (!reason) reason = "No reason provided!"; // Default reason if no reason is provided
 					if (member.kick) {
-						delCmd;
-						//message.channel.send("This should delete after 5 seconds").then(message.delete().catch(O_o=>{}));
+						message.channel.send(new Discord.RichEmbed().setTitle("Moderation Log").setDescription(`${message.author.toString()} KICKED ${member.toString()} FOR "${reason}"`).setColor(green)).then(message => {message.delete(10000).catch(O_o=>{})})
 						channel.send(new Discord.RichEmbed().setTitle("Moderation Log").setDescription(`${message.author.toString()} KICKED ${member.toString()} FOR "${reason}"`).setColor(green));
 					}
-					await member.kick(reason);
+					goodbye;
+					setTimeoutPromise(2000).then((value)=>{member.kick(reason)});
+					//await member.kick(reason);
 				break; //break is the same as defining the scope of the case if you don't break it will continue executing code until next break!
 				case "delete":
-				    const deleteCount = parseInt(args[0], 10);
-					if (!deleteCount || deleteCount < 2 || deleteCount > 100) {
+				  const deleteCount = parseInt(args[0], 10); // parseInt parses a string into an interger,
+					if (!deleteCount || deleteCount < 2 ) { //|| deleteCount > 100) {
 						message.channel.send(new Discord.RichEmbed().setTitle("ERROR!").setDescription("Provide a Number between 2 and 99").setColor(red));
 					}
 					const fetched = await message.channel.fetchMessages({limit: deleteCount});
+					let msgTotal = 0;
 					message.channel.bulkDelete(fetched)
-					message.channel.send(new Discord.RichEmbed().setTitle("That was some cleaning..").setDescription("DELETED " + deleteCount + " Total Messages").setColor(green));
+					message.channel.send(new Discord.RichEmbed().setTitle("That was some cleaning..").setDescription(`DELETED [${msgTotal}] Total Messages`).setColor(green)).then(message => {message.delete(10000).catch(O_o=>{})});
 				break;
 				case "clear":
 					//if () {
@@ -62,7 +65,6 @@ module.exports = {
 				default:message.channel.send(new Discord.RichEmbed().setTitle("ERROR! Unknown Command").setColor(red));
 			}
 		}
-
 		catch(err){
 			var a = "Unknown Error has happened when trying this command."
 			var b = "Do you have Permission to run this command? You can't run Admin Commands in Direct Message"
