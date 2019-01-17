@@ -39,7 +39,7 @@ module.exports = {
 					let goodbye = member.send(new Discord.RichEmbed().setTitle("You were kicked from Drunk Squad Gaming").setDescription(`${message.author.toString()} KICKED YOU FOR "${reason}"`).setColor(red));
 					if (!reason) reason = "No reason provided!"; // Default reason if no reason is provided
 					if (member.kick) {
-						message.channel.send(new Discord.RichEmbed().setTitle("Moderation Log").setDescription(`${message.author.toString()} KICKED ${member.toString()} FOR "${reason}"`).setColor(green)).then(message => {message.delete(10000).catch(O_o=>{})})
+						message.channel.send(new Discord.RichEmbed().setTitle("Moderation Log").setDescription(`${message.author.toString()} KICKED ${member.toString()} FOR "${reason}"`).setColor(green)).then(message => {message.delete(10000).catch(O_o=>{})});
 						channel.send(new Discord.RichEmbed().setTitle("Moderation Log").setDescription(`${message.author.toString()} KICKED ${member.toString()} FOR "${reason}"`).setColor(green));
 					}
 					goodbye;
@@ -62,15 +62,15 @@ module.exports = {
 					//}
 				break;
 				// If no case is matched this default code is then ran MUST BE LAST
-				default:message.channel.send(new Discord.RichEmbed().setTitle("ERROR! Unknown Command").setColor(red));
+				default:message.channel.send(new Discord.RichEmbed().setTitle("ERROR! Unknown Command").setColor(red)).then(message => {message.delete(10000).catch(O_o=>{})});
 			}
 		}
 		catch(err){
 			var a = "Unknown Error has happened when trying this command."
 			var b = "Do you have Permission to run this command? You can't run Admin Commands in Direct Message"
 			console.log(err)
-			message.channel.send(new Discord.RichEmbed().setTitle("ERROR!").setDescription(err).setColor(red));
-			message.channel.send(new Discord.RichEmbed().setTitle("ERROR!").setDescription(`${a}\n${b}`).setColor(red));
+			message.channel.send(new Discord.RichEmbed().setTitle("ERROR!").setDescription(err).setColor(red)).then(message => {message.delete(10000).catch(O_o=>{})});
+			message.channel.send(new Discord.RichEmbed().setTitle("ERROR!").setDescription(`${a}\n${b}`).setColor(red)).then(message => {message.delete(10000).catch(O_o=>{})});
 		}
 	}
 };
