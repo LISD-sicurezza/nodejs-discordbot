@@ -7,13 +7,22 @@ When developing these commands make sure to add the permission setting first to 
 [] Make sure EVERYTHING in this .js is nice and clean this should be your last step
 [] async needs to be caught with .catch due to deprecation 
 
+[?] When a user joins the server send a custom DM
+in the works however seems to break the bot really tired to look too far into this
+  [] After joining say that ${user} joined the server in a logging channel
+    [] if a user leaves say that ${user} left the server (UNLESS KICKED)
+
+
 [✔] Add !kick
   [✔] Add Reason for kick TRACKING
   [✔] Add Staff who kicked Suspect TRACKING
   [✔] Add Suspect Kicked by Staff TRACKING
     [✔] Add a log channel that Staff can see [STAFF THAT KICKED] [WHO THEY KICKED] [Custom reason for kick] [Include Timestamp]
-    [?] Send Suspect DM showing [STAFF THAT KICKED] [REASON FOR KICK] if they want to dispute a kick they can contact another Admin
-    This is done however the bot kicks the user before it can send the message. It needs to Send Message ---> then Kick
+    [✔ ??] Send Suspect DM showing [STAFF THAT KICKED] [REASON FOR KICK] if they want to dispute a kick they can contact another Admin. ??Include timestamp
+    [✔ ??] Notification goes away after 10 seconds // ??ERROR if user can't be kicked the message will still notified they were kicked even when they werent
+
+    Made it so the bot kicks after 2 seconds to give the bot time to send a kick DM to the SUSPECT then kick since API Doesn't allow messaging of users not in the discord
+    However this is a workaround im so tired it needs to be something like >> message.sendDM.then(member.kick) so it sends the message then kicks instead a time interval
 
 [] Add !ban / !tempban
   [?] Add Reason for ban TRACKING - CODE Created and done with !kick not implemented yet
@@ -29,10 +38,10 @@ When developing these commands make sure to add the permission setting first to 
     [?] Add a log channel that Staff can see [STAFF THAT MUTED] [WHO THEY MUTED] [Custom reason for ban] [Include Timestamp] - CODE Created and done with !kick not implemented yet
     [] Send Suspect DM showing [STAFF THAT KICKED] [REASON FOR BAN] if they want to dispute a ban they can contact another Admin
 
-[] Add !delete / !clear
-  [] !delete 0 specify how many messages to delete in the channel command is ran
+[?] Add !delete / !clear
+  [?] !delete 0 specify how many messages to delete in the channel command is ran
   [] !clear clears all messages in a channel
-    [] 
+    !delete is added but still shows and error when deleting needs worked on.
 
 This is for all Moderation Commands!
 
