@@ -39,10 +39,12 @@ module.exports = {
 					let goodbye = member.send(new Discord.RichEmbed().setTitle("You were kicked from Drunk Squad Gaming").setDescription(`${message.author.toString()} KICKED YOU FOR "${reason}"`).setColor(red));
 					if (!reason) reason = "No reason provided!"; // Default reason if no reason is provided
 					if (member.kick) {
+						//this scope runs if you try to kick someone but can't anyways. it should only run if KICKED
+						delCmd;
+						goodbye;
 						message.channel.send(new Discord.RichEmbed().setTitle("Moderation Log").setDescription(`${message.author.toString()} KICKED ${member.toString()} FOR "${reason}"`).setColor(green)).then(message => {message.delete(10000).catch(O_o=>{})});
 						channel.send(new Discord.RichEmbed().setTitle("Moderation Log").setDescription(`${message.author.toString()} KICKED ${member.toString()} FOR "${reason}"`).setColor(green));
 					}
-					goodbye;
 					setTimeoutPromise(2000).then((value)=>{member.kick(reason)});
 					//await member.kick(reason);
 				break; //break is the same as defining the scope of the case if you don't break it will continue executing code until next break!
