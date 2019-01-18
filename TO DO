@@ -7,8 +7,10 @@ When developing these commands make sure to add the permission setting first to 
 [] Make sure EVERYTHING in this .js is nice and clean this should be your last step
 [] async needs to be caught with .catch due to deprecation 
 [] invite command doesn't work
+[] rework all code to be like the !kick and !ban it is more clean
 [✔] read from a config
   [??] change the config on the fly (WIP Doesn't fully work yet)
+[✔] Commands don't work in DM fixed error
 
 
 [?] When a user joins the server send a custom DM
