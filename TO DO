@@ -35,10 +35,10 @@ in the works however seems to break the bot really tired to look too far into th
   [✔] Add Suspect banned by Staff TRACKING - CODE Created and done with !kick not implemented yet
     [✔] Add a log channel that Staff can see [STAFF THAT BANNED] [WHO THEY BANNED] [Custom reason for ban] [Include Timestamp]
     [✔] Send Suspect DM showing [STAFF THAT KICKED] [REASON FOR BAN] if they want to dispute a ban they can contact another Admin
-      [WIP] Add !unban 
-        [] Add reason for unban
-        [] Add staff who unbanned Suspect
-        [] Add suspect unbanned by for logging
+      [WIP] Add !unban unbanning isn't working code for rest is there tho
+        [✔] Add reason for unban
+        [✔] Add staff who unbanned Suspect
+        [✔] Add suspect unbanned by for logging
           [] Send suspect DM saying they are unbanned ? Don't think this is possible with discord api you can't send message from a bot to a user not in the server
 
 [] Add !mute / !tempmute
@@ -48,16 +48,16 @@ in the works however seems to break the bot really tired to look too far into th
     [?] Add a log channel that Staff can see [STAFF THAT MUTED] [WHO THEY MUTED] [Custom reason for ban] [Include Timestamp] - CODE Created and done with !kick not implemented yet
     [] Send Suspect DM showing [STAFF THAT KICKED] [REASON FOR BAN] if they want to dispute a ban they can contact another Admin
 
-[?] Add !delete / !clear
-  [?] !delete 0 specify how many messages to delete in the channel command is ran
-  [] !clear clears all messages in a channel
+[??] Add !delete / !clear ?? COMMANDS ARE ADDED BIT BUGGY THO
+  [??] !delete 0 specify how many messages to delete in the channel command is ran
+  [??] !clear clears all messages in a channel
     !delete is added but still shows and error when deleting needs worked on.
 
 This is for all Moderation Commands!
 
-[] Once command is ran it will say [STAFF NAME] [KICK / BAN / MUTE / etc..] [SUSPECT] [TIME... if any] in the current channel it's ran
+[✔] Once command is ran it will say [STAFF NAME] [KICK / BAN / MUTE / etc..] [SUSPECT] [TIME... if any] in the current channel it's ran
   [] Add REACT Confirm Option with ✔️ ❌ reactions. Select ❌  it will cancel the command
-    [] After Commands are confirmed and ran or canceled they will auto delete the user who used the !command and the display. (Not in log channel after it went through)
+  [✔] After Commands are confirmed and ran or canceled they will auto delete the user who used the !command and the display. (Not in log channel after it went through)
 
 #2 MEDIUM PRIORITY ========== SERVER MODERATION BOT AUTO DOES ==========================================================
 this will use moderation commands for itself so do this after #1
