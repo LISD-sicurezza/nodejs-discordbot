@@ -14,10 +14,12 @@ const purple = 0x7f00ff;
 /* deletes a message after 10secs this is used to delete notice commands then they go away*/
 var del = message => {message.delete(10000).catch(O_o=>{})};
 var del60 = message => {message.delete(60000).catch(O_o=>{})};
+
 module.exports = {
-	commands: async function(message, member, err) {
+	commands: async function(message, member, err, DMChannel) {
 		try {
-			let channel = message.member.guild.channels.find(ch => ch.name === 'mod-action')
+			let channel = message.guild.channels.find(ch => ch.name === 'mod-action');
+			if (message.channel.type === DMChannel) {return;} // If message is sent in DM return / Do nothing
 			if (message.author.equals(bot.user)) return; // if message is from bot return / DO NOTHING
 			if (!message.content.startsWith(config.prefix)) return; // if message doesn't have the prefix at the start return / DO NOTHING
 			const args = message.content.slice(config.prefix.length).trim().split(/ +/g) // takes the prefix.length and splits it any words to be read so !command it can read "!" and "command"
@@ -25,203 +27,280 @@ module.exports = {
 			switch (args[0].toLowerCase()) { //args[0] is the first character or word AKA prefix then .toLowerCase means any prefix typed is read as lowercase (meaning you can use caps)
 				case "commands":
 					delCmd;
-					let title1 = "Member";
-					let me1 = `**${config.prefix}coinflip** - Flips a coin showing Heads or Tails`;
-					let title2 = "Moderator";
+					let title1 = "Member+ Commands";
+					let me1 = `**${config.prefix}coinflip** - Flips a coin showing Heads or Tails`; let me2 = `**${config.prefix}invite** - Creates a 24Hours Invite`;
+					let title2 = "Moderator+ Commands";
 					let m1 = `**${config.prefix}kick** *[{name} {reason}]* - Kicks a User from the Discord`; let m2 = `**${config.prefix}nickname** *[{name} {nick} {reason}]* - Changes Users nickname`;
 					let m3 = `**${config.prefix}delete** *[{#}]* - deletes total messages in a channel from 2-99`;
-					let title3 = "Admin";
+					let title3 = "Admin+ Commands";
 					let a1 = `**${config.prefix}ban** *[{name} {reason}]* - Bans the User from Discord`; let a2 = `**${config.prefix}unban** *[{name} {reason}]* - unBans a User from Discord`;
 					let a3 = `**${config.prefix}clear** - Clears a channel of all messages`; let a4 = `**${config.prefix}prefix** *[{prefix}]* - changes the prefix for all commands (1 long only)`;
 					let a5 = `**${config.prefix}setonline** *[{put status here}]* - Changes this bots Playing Status`; let a6 = `**${config.prefix}shutdown** - Makes this BOT Shutdown`;
-					message.channel.send(new Discord.RichEmbed().setTitle(title1).setDescription(`${me1}\n`).setColor(green)).then(del60)
+					message.channel.send(new Discord.RichEmbed().setTitle(title1).setDescription(`${me1}\n${me2}\n`).setColor(green)).then(del60)
 					message.channel.send(new Discord.RichEmbed().setTitle(title2).setDescription(`${m1}\n${m2}\n${m3}\n`).setColor(purple)).then(del60)
 					message.channel.send(new Discord.RichEmbed().setTitle(title3).setDescription(`${a1}\n${a2}\n${a3}\n${a4}\n${a5}\n${a6}\n`).setColor(red)).then(del60)
 				break;
 // Kicks a Member from the Discord removing any roles they have. They are able to get invited back.
 				case "kick":
-          if (!message.member.roles.some(Perm.isMod) ) { //Array.some() used to find roles allowed to use this command
-				  	delCmd;
-				  	let title1 = "ERROR!";
-				  	let desc1 = "You are not a Mod or Admin!";
-				  	message.channel.send(new Discord.RichEmbed().setTitle(title1).setDescription(desc1).setColor(red)).then(del);
-					} else {
+				if (!message.member.roles.some(Perm.isMod)) {
 						delCmd;
-						let member = message.mentions.members.first() || message.guild.members.get(args[0]);
-						if (!member) {
-							let title2 = "ERROR!";
-							let desc2 = `Can't find ${args[1]}. Are you typing it right? They may not be apart of the server`;
-							message.channel.send(new Discord.RichEmbed().setTitle(title2).setDescription(desc2).setColor(red)).then(del);
+						message.channel.send(new Discord.RichEmbed()
+						.setTitle("ERROR!")
+					  .setDescription("You are not a Mod or Admin!")
+						.setColor(red)).then(del)
+				} else {
+					delCmd;
+					let member = message.mentions.members.first() || message.guild.members.get(args[0]);
+					if (!member) {
+							message.channel.send(new Discord.RichEmbed()
+							.setTitle("ERROR!")
+						  .setDescription(`Can't find ${args[1]}. Are you typing it right? They may not be apart of the server`)
+							.setColor(red)).then(del)
+					} else {
+						if (!member.kickable) {
+								message.channel.send(new Discord.RichEmbed()
+								.setTitle("ERROR!")
+							  .setDescription(`I can't kick ${member} they have UNLIMITED POWER`)
+								.setColor(red)).then(del)
 						} else {
-							if (!member.kickable) {
-								let title3 = "ERROR!";
-								let desc3 = `I can't kick ${member} they have UNLIMITED POWER`;
-								message.channel.send(new Discord.RichEmbed().setTitle(title3).setDescription(desc3).setColor(red)).then(del);
+							let reason = args.slice(2).join(' ');
+							if (!reason) {
+									message.channel.send(new Discord.RichEmbed()
+									.setTitle("ERROR!")
+								  .setDescription(`Reason for kick is required. USAGE: !kick @Name Reason`)
+									.setColor(red)).then(del);
 							} else {
-								let reason = args.slice(2).join(' ');
-								if (!reason) reason = "No reason provided!";
 								if (member.kick) {
-									let title4 = "MODERATION NOTICE";
-									let desc4 = `${message.author.toString()} has KICKED ${member.toString()} FOR: "${reason}"`;
-									message.channel.send(new Discord.RichEmbed().setTitle(title4).setDescription(desc4).setColor(purple)).then(del);
-									channel.send(new Discord.RichEmbed().setTitle(title4).setDescription(desc4).setColor(purple));
-									let title5 = "Sorry... you were kicked from Drunk Squad Gaming";
-									let desc5 = `${message.author.toString()} has kicked you FOR: "${reason}"`;
-									member.send(new Discord.RichEmbed().setTitle(title5).setDescription(desc5).setColor(purple))
-									setTimeoutPromise(2000).then((value)=>{member.kick(reason)}); // this kicks after 2 seconds
+										let embed = new Discord.RichEmbed()
+										.setTitle("MODERATION NOTICE")
+									  .setDescription(`${message.author.toString()} has KICKED ${member.toString()} FOR: "${reason}"`)
+										.setColor(red);
+										message.channel.send(embed).then(del);
+										channel.send(embed);
+										let embedDm = new Discord.RichEmbed()
+										.setTitle("Sorry... you were kicked from Drunk Squad Gaming")
+									  .setDescription(`${message.author.toString()} has kicked you FOR: "${reason}"`)
+										.setColor(red);
+										member.send(embedDM);
+										setTimeoutPromise(2000).then((value)=>{member.kick(reason)}).catch(O_o=>{});
 								} else {
-									let title6 = "ERROR!";
-									let desc6 = "Well... this shouldn't happen at all meaning you really broke something.";
-									message.channel.send(new Discord.RichEmbed().setTitle(title6).setDescription(desc6).setColor(red)).then(del);
+										message.channel.send(new Discord.RichEmbed()
+										.setTitle("ERROR!")
+									  .setDescription(`${err}\n\n If this error persists then contact @Blaze#0666 or @Luke SwagWalker#1460`)
+										.setColor(red)).then(del);
 								}
 							}
 						}
 					}
+				}
 				break;
 // Bans a Member from the Discord including their IP they will not be able to join back unless unbanned
 				case "ban":
-          if (!message.member.roles.some(Perm.isAdmin) ) {
-				  	delCmd;
-				  	let title1 = "ERROR!";
-				  	let desc1 = "You are not an Admin!";
-				  	message.channel.send(new Discord.RichEmbed().setTitle(title1).setDescription(desc1).setColor(red)).then(del);
-					} else {
-						delCmd;
-						let member = message.mentions.members.first() || message.guild.members.get(args[0]);
-						if (!member) {
-							let title2 = "ERROR!";
-							let desc2 = `Can't find ${args[1]}. Are you typing it right? They may not be apart of the server`;
-							message.channel.send(new Discord.RichEmbed().setTitle(title2).setDescription(desc2).setColor(red)).then(del);
-						} else {
-							if (!member.bannable) {
-								let title3 = "ERROR!";
-								let desc3 = `I can't ban ${member} they have UNLIMITED POWER`;
-								message.channel.send(new Discord.RichEmbed().setTitle(title3).setDescription(desc3).setColor(red)).then(del);
-							} else {
-								let reason = args.slice(2).join(' ');
-								if (!reason) reason = "No reason provided!";
-								if (member.ban) {
-									let title4 = "ADMIN NOTICE";
-									let desc4 = `${message.author.toString()} has BANNED ${member.toString()} FOR: "${reason}"`;
-									message.channel.send(new Discord.RichEmbed().setTitle(title4).setDescription(desc4).setColor(red)).then(del);
-									channel.send(new Discord.RichEmbed().setTitle(title4).setDescription(desc4).setColor(red));
-									let title5 = "Sorry... you were banned from Drunk Squad Gaming";
-									let desc5 = `${message.author.toString()} has banned you FOR: "${reason}" If you believe this is an Error contact a Server Staff @Blaze#0666`;
-									member.send(new Discord.RichEmbed().setTitle(title5).setDescription(desc5).setColor(red))
-									setTimeoutPromise(2000).then((value)=>{member.ban(reason)}); // this bans after 2 seconds
-								} else {
-									let title6 = "ERROR!";
-									let desc6 = "Well... this shouldn't happen at all meaning you really broke something.";
-									message.channel.send(new Discord.RichEmbed().setTitle(title6).setDescription(desc6).setColor(red)).then(del);
-								}
-							}
-						}
-					}
+          if (!message.member.roles.some(Perm.isAdmin)) {
+          		delCmd;
+          		message.channel.send(new Discord.RichEmbed()
+          		.setTitle("ERROR!")
+          	  .setDescription("You are not an Admin!")
+          		.setColor(red)).then(del)
+          } else {
+          	delCmd;
+          	let member = message.mentions.members.first() || message.guild.members.get(args[0]);
+          	if (!member) {
+          			message.channel.send(new Discord.RichEmbed()
+          			.setTitle("ERROR!")
+          		  .setDescription(`Can't find ${args[1]}. Are you typing it right? They may not be apart of the server`)
+          			.setColor(red)).then(del)
+          	} else {
+          		if (!member.bannable) {
+          				message.channel.send(new Discord.RichEmbed()
+          				.setTitle("ERROR!")
+          			  .setDescription(`I can't ban ${member} they have UNLIMITED POWER`)
+          				.setColor(red)).then(del)
+          		} else {
+          			let reason = args.slice(2).join(' ');
+          			if (!reason) {
+          					message.channel.send(new Discord.RichEmbed()
+          					.setTitle("ERROR!")
+          				  .setDescription(`Reason for ban is required. USAGE: !ban @Name Reason`)
+          					.setColor(red)).then(del);
+          			} else {
+          				if (member.ban) {
+          						let embed = new Discord.RichEmbed()
+          						.setTitle("ADMIN NOTICE")
+          					  .setDescription(`${message.author.toString()} has BANNED ${member.toString()} FOR: "${reason}"`)
+          						.setColor(red);
+          						message.channel.send(embed).then(del);
+          						channel.send(embed);
+          						let embedDm = new Discord.RichEmbed()
+          						.setTitle("Sorry... you were kicked from Drunk Squad Gaming")
+          					  .setDescription(`${message.author.toString()} has BANNED you FOR: "${reason}"`)
+          						.setColor(red);
+          						member.send(embedDM);
+          						setTimeoutPromise(2000).then((value)=>{member.ban(reason)}).catch(O_o=>{});
+          				} else {
+          						message.channel.send(new Discord.RichEmbed()
+          						.setTitle("CAUGHT ERROR!")
+          					  .setDescription(`${err}\n\n If this error persists then contact @Blaze#0666 or @Luke SwagWalker#1460`)
+          						.setColor(red)).then(del);
+          				}
+          			}
+          		}
+          	}
+          }
 				break;
 // Unbans a user that is banned from the Discord (Banning ip bans and prevents the user from joining back)
 				case "unban":
 				  let user = args[1];
-          if (!message.member.roles.some(Perm.isAdmin) ) {
-				  	delCmd;
-				  	let title1 = "ERROR!";
-				  	let desc1 = "You are not an Admin!";
-				  	message.channel.send(new Discord.RichEmbed().setTitle(title1).setDescription(desc1).setColor(red)).then(del);
+          if (!message.member.roles.some(Perm.isAdmin)) {
+          		delCmd;
+          		message.channel.send(new Discord.RichEmbed()
+          		.setTitle("ERROR!")
+          	  .setDescription("You are not an Admin!")
+          		.setColor(red)).then(del)
 					} else {
+						delCmd;
 						let reason = args.slice(2).join(' ');
-						if (!reason) reason = "No reason provided!";
-						if (user.unban) {
-							let title4 = "ADMIN NOTICE";
-							let desc4 = `${message.author.toString()} has UNBANNED ${member.toString()} FOR: "${reason}"`;
-							message.channel.send(new Discord.RichEmbed().setTitle(title4).setDescription(desc4).setColor(red)).then(del);
-							channel.send(new Discord.RichEmbed().setTitle(title4).setDescription(desc4).setColor(red));
-							setTimeoutPromise(2000).then((value)=>{user.unban(reason)}); // this kicks after 2 seconds
+						if (!reason) {
+								message.channel.send(new Discord.RichEmbed()
+								.setTitle("ERROR!")
+							  .setDescription(`Reason for unban is required. USAGE: !unban @Name Reason`)
+								.setColor(red)).then(del);
 						} else {
-							let title3 = "ERROR!";
-							let desc3 = `I can't unban ${user} ?`;
-							message.channel.send(new Discord.RichEmbed().setTitle(title3).setDescription(desc3).setColor(red)).then(del);
+							if (user.unban) {
+									let embed = new Discord.RichEmbed()
+									.setTitle("ADMIN NOTICE")
+								  .setDescription(`${message.author.toString()} has UNBANNED ${user.toString()} FOR: "${reason}"`)
+									.setColor(red);
+									message.channel.send(embed).then(del);
+									channel.send(embed);
+							} else {
+									message.channel.send(new Discord.RichEmbed()
+									.setTitle("CAUGHT ERROR!")
+								  .setDescription(`${err}\n\n If this error persists then contact @Blaze#0666 or @Luke SwagWalker#1460`)
+									.setColor(red)).then(del);
+							}
 						}
 					}
 				break;
 // Delete a set number of messages from 2-99 doesn't show actual number of messages delete just how many you said to delete
 				case "delete":
-				  if (!message.member.roles.some(Perm.isMod) ) { //Array.some() used to find roles allowed to use this command
-				  	delCmd;
-				  	let title1 = "ERROR!";
-				  	let desc1 = `You are not a Mod or Admin!`;
-				  	message.channel.send(new Discord.RichEmbed().setTitle(title1).setDescription(desc1).setColor(red)).then(del);
+				  if (!message.member.roles.some(Perm.isMod)) { //Array.some() used to find roles allowed to use this command
+				  		delCmd;
+				  		message.channel.send(new Discord.RichEmbed()
+				  		.setTitle("ERROR!")
+				  	  .setDescription("You are not a Mod / Admin!")
+				  		.setColor(red)).then(del)
 				  } else {
-				    var deleteCount = parseInt(args[1], 10);
+				  	delCmd;
+				    let deleteCount = parseInt(args[1], 10);
 				  	if (!deleteCount || deleteCount < 2 || deleteCount > 99) {
-				  		let title2 = "ERROR!";
-				  		let desc2 = `Usage: ${config.prefix}delete [2-99]`;
-				  		message.channel.send(new Discord.RichEmbed().setTitle(title2).setDescription(desc2).setColor(red)).then(del);
+				  			message.channel.send(new Discord.RichEmbed()
+				  			.setTitle("ERROR!")
+				  		  .setDescription(`Usage: ${config.prefix}delete [2-99]`)
+				  			.setColor(red)).then(del)
 				  	} else {
-				  		const fetched = await message.channel.fetchMessages({limit: deleteCount});
-				  		message.channel.bulkDelete(fetched);
-				  		let title3 = "MODERATION NOTICE";
-				  		let desc3 = `DELETED [${deleteCount}] Total Messages`;
-				  		message.channel.send(new Discord.RichEmbed().setTitle(title3).setDescription(desc3).setColor(purple)).then(del);
-				  		let title4 = "MODERATION NOTICE";
-				  		let desc4 = `${message.author.toString()} has DELETED [${deleteCount}] Messages in ${message.channel.toString()}`;
-				  		channel.send(new Discord.RichEmbed().setTitle(title4).setDescription(desc4).setColor(purple));
+				  		if (message.member.roles.some(Perm.isMod)) {
+				  				const fetched = await message.channel.fetchMessages({limit: deleteCount});
+				  			  message.channel.bulkDelete(fetched);
+				  				message.channel.send(new Discord.RichEmbed()
+				  				.setTitle("MODERATION NOTICE")
+				  			  .setDescription(`DELETED [${deleteCount}] Total Messages`)
+				  				.setColor(purple)).then(del)
+				  				channel.send(new Discord.RichEmbed()
+				  				.setTitle("MODERATION NOTICE")
+				  			  .setDescription(`${message.author.toString()} has DELETED [${deleteCount}] Messages in ${message.channel.toString()}`)
+				  				.setColor(purple))
+				  		} else {
+				  				message.channel.send(new Discord.RichEmbed()
+				  				.setTitle("CAUGHT ERROR!")
+				  			  .setDescription(`${err}\n\n If this error persists then contact @Blaze#0666 or @Luke SwagWalker#1460`)
+				  				.setColor(red)).then(del);
+				  		}
 				  	}
 				  }
 				break;
 // Deletes as many messages as it can fetch doesn't seem to clear them all as there is a limit to how many it will fetch?
 				case "clear":
-					if (!message.member.roles.some(Perm.isAdmin) ) {
-						delCmd;
-						let title1 = "ERROR!";
-						let desc1 = "You are not an Admin!";
-						message.channel.send(new Discord.RichEmbed().setTitle(title1).setDescription(desc1).setColor(red)).then(del);
+					if (!message.member.roles.some(Perm.isAdmin)) {
+				  		delCmd;
+				  		message.channel.send(new Discord.RichEmbed()
+				  		.setTitle("ERROR!")
+				  	  .setDescription("You are not a Mod / Admin!")
+				  		.setColor(red)).then(del)
 					} else {
-						delCmd;
-						const fetched = await message.channel.fetchMessages()
-						message.channel.bulkDelete(fetched);
-						let title2 = "ADMIN NOTICE";
-						let desc2 = `Cleared all messages I was able to fetch!`;
-						message.channel.send(new Discord.RichEmbed().setTitle(title2).setDescription(desc2).setColor(red)).then(del);
-						let title4 = "ADMIN NOTICE";
-						let desc4 = `${message.author.toString()} has CLEARED ${message.channel.toString()}`;
-						channel.send(new Discord.RichEmbed().setTitle(title4).setDescription(desc4).setColor(red));
+						delCmd; // trying to clear 14 day old messages will not work with Discord API need to .catch that error
+						if (message.member.roles.some(Perm.isAdmin)) {
+								const fetched = await message.channel.fetchMessages()
+								message.channel.bulkDelete(fetched);
+								message.channel.send(new Discord.RichEmbed()
+								.setTitle("ADMIN NOTICE")
+							  .setDescription(`I just cleaned up [PLACE HOLDER] Messages for you`)
+								.setColor(red)).then(del);
+								channel.send(new Discord.RichEmbed()
+								.setTitle("ADMIN NOTICE")
+								.setDescription(`${message.author.toString()} has CLEARED [PLACE HOLDER] Messages in ${message.channel.toString()}`)
+								.setColor(red))
+						} else {
+								message.channel.send(new Discord.RichEmbed()
+								.setTitle("CAUGHT ERROR!")
+							  .setDescription(`${err}\n\n If this error persists then contact @Blaze#0666 or @Luke SwagWalker#1460`)
+								.setColor(red)).then(del);
+						}
 					}
 				break;
 // changes the prefix in the config for the bot for the commands to use (useful for multiple bots) | probably should have the prefix in the online status so people don't forget it...
 				case "prefix":
-					if (!message.member.roles.some(Perm.isAdmin) ) {
-						delCmd;
-						let title1 = "ERROR!";
-						let desc1 = "You are not an Admin!";
-						message.channel.send(new Discord.RichEmbed().setTitle(title1).setDescription(desc1).setColor(red)).then(del);
+					if (!message.member.roles.some(Perm.isAdmin)) {
+							delCmd;
+							message.channel.send(new Discord.RichEmbed()
+							.setTitle("ERROR!")
+						  .setDescription("You are not a Mod / Admin!")
+							.setColor(red)).then(del)
 					} else {
+						delCmd;
 						if (args[1]) {
 							let num = config.prefix.length+args[0].length+1;
 							if (message.content.length != 9) {
-								let title = "ERROR!";
-								let desc = "Prefix can only be 1 long";
-								message.channel.send(new Discord.RichEmbed().setTitle(title).setDescription(desc).setColor(red)).then(del);
+									message.channel.send(new Discord.RichEmbed()
+									.setTitle("ERROR!")
+								  .setDescription("Prefix can only be 1 long")
+									.setColor(red)).then(del)
 							} else {
-								config.prefix = message.content[num];
-								console.log(`Prefix ${config.prefix}`);
-								let title1 = "ADMIN NOTICE";
-								let desc1 = `Prefix set to ${config.prefix}`;
-								message.channel.send(new Discord.RichEmbed().setTitle(title1).setDescription(desc1).setColor(red)).then(del);
-								let title3 = "ADMIN NOTICE";
-								let desc3 = `${message.author.toString()} has change BOT Prefix to "${config.prefix}"`;
-								channel.send(new Discord.RichEmbed().setTitle(title3).setDescription(desc3).setColor(red));
+								if (message.member.roles.some(Perm.isAdmin)) {
+									config.prefix = message.content[num];
+									console.log(`Prefix ${config.prefix}`);
+									message.channel.send(new Discord.RichEmbed()
+									.setTitle("ADMIN NOTICE")
+								  .setDescription(`${message.author.toString()} has change BOT Prefix to "${config.prefix}"`)
+									.setColor(red)).then(del);
+									channel.send(new Discord.RichEmbed()
+								  .setTitle("ADMIN NOTICE")
+									.setDescription(`${message.author.toString()} has change BOT Prefix to "${config.prefix}"`)
+									.setColor(red));
+								} else {
+									message.channel.send(new Discord.RichEmbed()
+									.setTitle("CAUGHT ERROR!")
+								  .setDescription(`${err}\n\n If this error persists then contact @Blaze#0666 or @Luke SwagWalker#1460`)
+									.setColor(red)).then(del);
+								}
 							}
 						} else {
-							message.channel.send(new Discord.RichEmbed().setTitle(`Usage: ${config.prefix}prefix !`).setColor(red)).then(del);
+							delCmd;
+							message.channel.send(new Discord.RichEmbed()
+							.setTitle("ERROR!")
+							.setDescription(`Usage: ${config.prefix}prefix !`)
+							.setColor(red)).then(del)
 						}
 					}
 				break;
 // Sets what people see the bot is playing when online 
 				case "setonline":
 					if (!message.member.roles.some(Perm.isAdmin) ) {
-						delCmd;
-						let title1 = "ERROR!";
-						let desc1 = "You are not an Admin!";
-						message.channel.send(new Discord.RichEmbed().setTitle(title1).setDescription(desc1).setColor(red)).then(del);
+							delCmd;
+							message.channel.send(new Discord.RichEmbed()
+							.setTitle("ERROR!")
+						  .setDescription("You are not a Mod / Admin!")
+							.setColor(red)).then(del)
 					} else {
 						if (args[1]) {
 							config.online = message.content.slice(2);
@@ -279,9 +358,13 @@ module.exports = {
 				break;
 // flips a coin saying either heads or tails simple
 				case "coinflip":
-					let heads = new Discord.RichEmbed().setDescription(`${message.author.toString()} Coin landed on HEADS`).setColor(green).then(del);
-					let tails = new Discord.RichEmbed().setDescription(`${message.author.toString()} Coin landed on TAILS`).setColor(green).then(del);
-					message.channel.send((Math.floor(Math.random() * 2) == 0) ? tails : heads);
+					delCmd;
+					let heads = new Discord.RichEmbed().setDescription(`${message.author.toString()} Coin landed on HEADS`).setColor(green);
+					let tails = new Discord.RichEmbed().setDescription(`${message.author.toString()} Coin landed on TAILS`).setColor(green);
+					if (!message.member.roles.some(Perm.isMember)) { 
+					} else {
+						message.channel.send((Math.floor(Math.random() * 2) == 0) ? tails : heads).then(del);
+					}
 				break;
 // makes a temporary invite for members only
 				case "invite":
@@ -297,14 +380,11 @@ module.exports = {
 // If no case is matched this default code is then ran MUST BE LAST
 				default:message.channel.send(new Discord.RichEmbed().setTitle("ERROR!").setDescription("Unknown Command").setColor(red)).then(del);
 			}
-		}
-// Catches any errors thrown in any of the commands that aren't handled then displays them here.
-		catch(err){
-			let title1 = "ERROR!";
-			let desc1 = "Do you have Permission to run this command? You can't run Admin Commands in Direct Message"
-			let desc2 = "If this error persists then contact @Blaze#0666 or @Luke SwagWalker#1460"
-			console.log(err)
-			message.channel.send(new Discord.RichEmbed().setTitle(title1).setDescription(`${err}\n${desc1}\n\n${desc2}`).setColor(red)).then(del);
+		}	catch (err) {
+			message.channel.send(new Discord.RichEmbed()
+			.setTitle("CAUGHT ERROR!")
+			.setDescription(`${err}\n\n If this error persists then contact @Blaze#0666 or @Luke SwagWalker#1460`)
+			.setColor(red)).then(del);
 		}
 	}
 };
