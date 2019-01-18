@@ -6,6 +6,10 @@ When developing these commands make sure to add the permission setting first to 
 [] After creation try to make variables for same code to prevent constant reuse
 [] Make sure EVERYTHING in this .js is nice and clean this should be your last step
 [] async needs to be caught with .catch due to deprecation 
+[] invite command doesn't work
+[✔] read from a config
+  [??] change the config on the fly (WIP Doesn't fully work yet)
+
 
 [?] When a user joins the server send a custom DM
 in the works however seems to break the bot really tired to look too far into this

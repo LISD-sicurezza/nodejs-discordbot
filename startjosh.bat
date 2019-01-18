@@ -1,1 +1,1 @@
-cmd /K "cd C:\Users\joshr\Desktop\js projects\discordbot\js"
+cmd /K "cd C:\Users\joshr\Desktop\DiscordBot\js"
