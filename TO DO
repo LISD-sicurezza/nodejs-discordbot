@@ -11,7 +11,7 @@ When developing these commands make sure to add the permission setting first to 
 in the works however seems to break the bot really tired to look too far into this
   [] After joining say that ${user} joined the server in a logging channel
     [] if a user leaves say that ${user} left the server (UNLESS KICKED)
-
+[] Polish Moderation Commands (Add like an avatar that show like BANNED etc that is embeded into the message)
 
 [✔] Add !kick
   [✔] Add Reason for kick TRACKING
@@ -19,17 +19,23 @@ in the works however seems to break the bot really tired to look too far into th
   [✔] Add Suspect Kicked by Staff TRACKING
     [✔] Add a log channel that Staff can see [STAFF THAT KICKED] [WHO THEY KICKED] [Custom reason for kick] [Include Timestamp]
     [✔ ??] Send Suspect DM showing [STAFF THAT KICKED] [REASON FOR KICK] if they want to dispute a kick they can contact another Admin. ??Include timestamp
-    [✔ ??] Notification goes away after 10 seconds // ??ERROR if user can't be kicked the message will still notified they were kicked even when they werent
+    [✔] Notification goes away after 10 seconds // ✔ERROR if user can't be kicked the message will still notified they were kicked even when they werent
+      [] when the bot kicks shouldn't be after a timed delay instead it should await for DM .then kick the person
 
     Made it so the bot kicks after 2 seconds to give the bot time to send a kick DM to the SUSPECT then kick since API Doesn't allow messaging of users not in the discord
     However this is a workaround im so tired it needs to be something like >> message.sendDM.then(member.kick) so it sends the message then kicks instead a time interval
 
-[] Add !ban / !tempban
-  [?] Add Reason for ban TRACKING - CODE Created and done with !kick not implemented yet
-  [?] Add Staff who banned Suspect TRACKING - CODE Created and done with !kick not implemented yet
-  [?] Add Suspect banned by Staff TRACKING - CODE Created and done with !kick not implemented yet
-    [?] Add a log channel that Staff can see [STAFF THAT BANNED] [WHO THEY BANNED] [Custom reason for ban] [Include Timestamp]
-    [] Send Suspect DM showing [STAFF THAT KICKED] [REASON FOR BAN] if they want to dispute a ban they can contact another Admin
+[✔] Add !ban
+  [✔] Add Reason for ban TRACKING - CODE Created and done with !kick not implemented yet
+  [✔] Add Staff who banned Suspect TRACKING - CODE Created and done with !kick not implemented yet
+  [✔] Add Suspect banned by Staff TRACKING - CODE Created and done with !kick not implemented yet
+    [✔] Add a log channel that Staff can see [STAFF THAT BANNED] [WHO THEY BANNED] [Custom reason for ban] [Include Timestamp]
+    [✔] Send Suspect DM showing [STAFF THAT KICKED] [REASON FOR BAN] if they want to dispute a ban they can contact another Admin
+      [WIP] Add !unban 
+        [] Add reason for unban
+        [] Add staff who unbanned Suspect
+        [] Add suspect unbanned by for logging
+          [] Send suspect DM saying they are unbanned ? Don't think this is possible with discord api you can't send message from a bot to a user not in the server
 
 [] Add !mute / !tempmute
   [?] Add Reason for Mute TRACKING - CODE Created and done with !kick not implemented yet

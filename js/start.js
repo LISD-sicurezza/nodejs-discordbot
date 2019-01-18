@@ -1,24 +1,20 @@
-const backend = require('./backend.js');
-const mod = require('./moderation.js');
+const chatCommands = require('./commands.js');
 const Discord = require("discord.js");
+const util = require('util');
 const bot = new Discord.Client();
 
-const embedjson = require('./config.json');
-var json = JSON.stringify(embedjson.online);
-
-const token = "NTMzNzQyNzI0NTI0ODAyMDY0.Dxvkpg.hSAt-oGv3nxSZ7kE2B_d7hLMogk";
-
+const config = require('./config.json');
 // uses the token needed to login the bot
-bot.login(token);
+bot.login(config.token);
 
 // when the bot is ready
 bot.on("ready", function setGame(){
-	bot.user.setActivity(json);
-	console.log("Activity set as " + json);
+	bot.user.setActivity(config.online);
+	console.log(`Bot is ready Activity set as ${config.online}`)
 });
 
-bot.on("guildMemberAdd", backend.addRole);
-
-bot.on("message", mod.staff); // backend.commands to have it run the regular commands
+//bot.on("guildMemberAdd", backend.addRole);
+bot.on("message", chatCommands.commands);
 
 // To start the bot use startluke.bat then type node start.js
+// backend is no longer in use
