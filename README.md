@@ -1,13 +1,18 @@
-# discordbot
-Dependencies discord.js
+# DiscordBot/dsg
+# Dependencies: 
+discord.js
 
-to install discord.js
-open up cmd
-cmd CD where your folder for the bot is 
-EXAMPLE cd C:\Users\josh\Desktop\js projects\discordbot
-then npm install discord.js
+# Installation
+Navigate to your './DiscordBot' folder
+Open up CMD Prompt then cd into './DiscordBot'
+EXAMPLE 'cd C:\Users\josh\Desktop\DiscordBot'
+Now you want to npm install all dependencies or it will not work.
+EXAMPLE npm install discord.js
+(You need to do this for each dependency listed above)
 
-to start the bot cd where the start.js is at then do: node start.js
+if done right you will now have a node-modules folder like './DiscordBot/node-modules'
 
-this will then run the bot! it should be logged in to the discord server
+# Running the bot
+To run the bot simply navigate cd back to './DiscordBot' (You might be here if on installation step)
+then type 'node start.js' this will have Node.js start the start.js
 
