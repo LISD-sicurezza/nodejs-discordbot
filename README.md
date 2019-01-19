@@ -27,6 +27,7 @@ Updated 1/18/19
 - [x] Read config.json
 - [ ] Write to config.json
 
+# MODERATION COMMANDS
 - [x] Add !kick command - Kicks user from server - uses permission.js to check for perms
 - [x] Add reason for kick - required
 - [x] Show staff who kicked
@@ -37,7 +38,7 @@ Updated 1/18/19
 - [ ] Command has a react to confirm option runs command only after AUTHOR WHO RAN COMMAND CONFIRMS IT
 - [ ] Command react confirm will auto delete the message after say 20 seconds
 - [ ] FINAL !kick - Review all code make sure all bugs are squashed
-
+//
 - [x] Add !ban command - bans user from server - uses permission.js to check for perms
 - [x] Add reason for ban - required
 - [x] Show staff who banned
@@ -48,7 +49,7 @@ Updated 1/18/19
 - [ ] Command has a react to confirm option runs command only after AUTHOR WHO RAN COMMAND CONFIRMS IT
 - [ ] Command react confirm will auto delete the message after say 20 seconds
 - [ ] FINAL !ban - Review all code make sure all bugs are squashed
-
+//
 - [x] Add !unban command - [x] unbans user from server - uses permission.js to check for perms
 - [x] Add reason for unban - required
 - [x] Show staff who unbanned
@@ -58,4 +59,4 @@ Updated 1/18/19
 - [ ] Command has a react to confirm option runs command only after AUTHOR WHO RAN COMMAND CONFIRMS IT
 - [ ] Command react confirm will auto delete the message after say 20 seconds
 - [ ] FINAL !unban - Review all code make sure all bugs are squashed
-
+//
