@@ -20,5 +20,13 @@ To run the bot simply navigate cd back to './DiscordBot' (You might be here if o
 then type 'node start.js' this will have Node.js start the start.js
 
 # TO DO
-Add link to issues here
+https://github.com/BoonieHat/discordbot/issues
 
+BOT MANAGER COMMANDS
+https://github.com/BoonieHat/discordbot/issues/4#issue-400956978
+NON SPECIFIC
+https://github.com/BoonieHat/discordbot/issues/3#issue-400956537
+NONSTAFF COMMANDS
+https://github.com/BoonieHat/discordbot/issues/2#issue-400956193
+STAFF COMMANDS
+https://github.com/BoonieHat/discordbot/issues/1#issue-400955687
