@@ -1,1 +1,0 @@
-cmd /K "cd C:\Users\joshr\Desktop\DiscordBot\js"
