@@ -1,6 +1,7 @@
 const Discord = require("discord.js");
 const Perm = require("./permissions.js");
 const config = require('./config.json');
+const banJS = require('./ban.js');
 const util = require('util');
 
 const bot = new Discord.Client();
@@ -18,10 +19,10 @@ var del60 = message => {message.delete(60000).catch(O_o=>{})};
 module.exports = {
 	commands: async function(message, member, err, DMChannel) {
 		try {
-			let channel = message.guild.channels.find(ch => ch.name === 'mod-action');
 			if (message.channel.type === DMChannel) {return;} // If message is sent in DM return / Do nothing
 			if (message.author.equals(bot.user)) return; // if message is from bot return / DO NOTHING
 			if (!message.content.startsWith(config.prefix)) return; // if message doesn't have the prefix at the start return / DO NOTHING
+			var channel = message.guild.channels.find(ch => ch.name === config.staffNotify);
 			const args = message.content.slice(config.prefix.length).trim().split(/ +/g) // takes the prefix.length and splits it any words to be read so !command it can read "!" and "command"
 			var delCmd = message.delete().catch(O_o=>{}); // this deletes a message instantly then .catchs an error but doesn't display the error (Must be caught after use)
 			switch (args[0].toLowerCase()) { //args[0] is the first character or word AKA prefix then .toLowerCase means any prefix typed is read as lowercase (meaning you can use caps)
@@ -51,6 +52,13 @@ module.exports = {
 				} else {
 					delCmd;
 					let member = message.mentions.members.first() || message.guild.members.get(args[0]);
+					if (message.author.toString() === `<@${member.id}>`) {
+							message.channel.send(new Discord.RichEmbed()
+							.setTitle("ERROR!")
+						  .setDescription(`You can't kick yourself!`)
+							.setColor(red)).then(del)
+							return;
+					}
 					if (!member) {
 							message.channel.send(new Discord.RichEmbed()
 							.setTitle("ERROR!")
@@ -81,7 +89,7 @@ module.exports = {
 										.setTitle("Sorry... you were kicked from Drunk Squad Gaming")
 									  .setDescription(`${message.author.toString()} has kicked you FOR: "${reason}"`)
 										.setColor(red);
-										member.send(embedDM);
+										member.send(embedDm);
 										setTimeoutPromise(2000).then((value)=>{member.kick(reason)}).catch(O_o=>{});
 								} else {
 										message.channel.send(new Discord.RichEmbed()
@@ -96,57 +104,64 @@ module.exports = {
 				break;
 // Bans a Member from the Discord including their IP they will not be able to join back unless unbanned
 				case "ban":
-          if (!message.member.roles.some(Perm.isAdmin)) {
-          		delCmd;
-          		message.channel.send(new Discord.RichEmbed()
-          		.setTitle("ERROR!")
-          	  .setDescription("You are not an Admin!")
-          		.setColor(red)).then(del)
-          } else {
-          	delCmd;
-          	let member = message.mentions.members.first() || message.guild.members.get(args[0]);
-          	if (!member) {
-          			message.channel.send(new Discord.RichEmbed()
-          			.setTitle("ERROR!")
-          		  .setDescription(`Can't find ${args[1]}. Are you typing it right? They may not be apart of the server`)
-          			.setColor(red)).then(del)
-          	} else {
-          		if (!member.bannable) {
-          				message.channel.send(new Discord.RichEmbed()
-          				.setTitle("ERROR!")
-          			  .setDescription(`I can't ban ${member} they have UNLIMITED POWER`)
-          				.setColor(red)).then(del)
-          		} else {
-          			let reason = args.slice(2).join(' ');
-          			if (!reason) {
-          					message.channel.send(new Discord.RichEmbed()
-          					.setTitle("ERROR!")
-          				  .setDescription(`Reason for ban is required. USAGE: !ban @Name Reason`)
-          					.setColor(red)).then(del);
-          			} else {
-          				if (member.ban) {
-          						let embed = new Discord.RichEmbed()
-          						.setTitle("ADMIN NOTICE")
-          					  .setDescription(`${message.author.toString()} has BANNED ${member.toString()} FOR: "${reason}"`)
-          						.setColor(red);
-          						message.channel.send(embed).then(del);
-          						channel.send(embed);
-          						let embedDm = new Discord.RichEmbed()
-          						.setTitle("Sorry... you were kicked from Drunk Squad Gaming")
-          					  .setDescription(`${message.author.toString()} has BANNED you FOR: "${reason}"`)
-          						.setColor(red);
-          						member.send(embedDM);
-          						setTimeoutPromise(2000).then((value)=>{member.ban(reason)}).catch(O_o=>{});
-          				} else {
-          						message.channel.send(new Discord.RichEmbed()
-          						.setTitle("CAUGHT ERROR!")
-          					  .setDescription(`${err}\n\n If this error persists then contact @Blaze#0666 or @Luke SwagWalker#1460`)
-          						.setColor(red)).then(del);
-          				}
-          			}
-          		}
-          	}
-          }
+				if (!message.member.roles.some(Perm.isAdmin)) {
+				    delCmd;
+				    message.channel.send(new Discord.RichEmbed()
+				    .setTitle("ERROR!")
+				    .setDescription("You are not an Admin!")
+				    .setColor(red)).then(del)
+				} else {
+				  delCmd;
+				  let member = message.mentions.members.first() || message.guild.members.get(args[0]);
+				  if (message.author.toString() === `<@${member.id}>`) {
+				    	message.channel.send(new Discord.RichEmbed()
+				      .setTitle("ERROR!")
+				      .setDescription(`You can't ban yourself!`)
+				      .setColor(red)).then(del)
+				      return;
+				  }
+				  if (!member) {
+				    message.channel.send(new Discord.RichEmbed()
+				    .setTitle("ERROR!")
+				    .setDescription(`Can't find ${args[1]}. Are you typing it right? They may not be apart of the server`)
+				    .setColor(red)).then(del)
+				  } else {
+				    if (!member.bannable) {
+				        message.channel.send(new Discord.RichEmbed()
+				        .setTitle("ERROR!")
+				        .setDescription(`I can't ban ${member} they have UNLIMITED POWER`)
+				        .setColor(red)).then(del)
+				    } else {
+				      let reason = args.slice(2).join(' ');
+				      if (!reason) {
+				        	message.channel.send(new Discord.RichEmbed()
+				          .setTitle("ERROR!")
+				          .setDescription(`Reason for ban is required. USAGE: !ban @Name Reason`)
+				          .setColor(red)).then(del);
+				      } else {
+				        if (member.ban) {
+				            let embed = new Discord.RichEmbed()
+				          	.setTitle("ADMIN NOTICE")
+				          	.setDescription(`${message.author.toString()} has BANNED ${member.toString()} FOR: "${reason}"`)
+				          	.setColor(red);
+				          	message.channel.send(embed).then(del);
+				          	channel.send(embed);
+				          	let embedDm = new Discord.RichEmbed()
+				          	.setTitle("Sorry... you were kicked from Drunk Squad Gaming")
+				          	.setDescription(`${message.author.toString()} has BANNED you FOR: "${reason}"`)
+				          	.setColor(red);
+				          	member.send(embedDm);
+				          	setTimeoutPromise(2000).then((value)=>{member.ban(reason)}).catch(O_o=>{});
+				        } else {
+				          message.channel.send(new Discord.RichEmbed()
+				          .setTitle("CAUGHT ERROR!")
+				          .setDescription(`${err}\n\n If this error persists then contact @Blaze#0666 or @Luke SwagWalker#1460`)
+				          .setColor(red)).then(del);
+				        }
+				      }
+				    }
+				  }
+				}
 				break;
 // Unbans a user that is banned from the Discord (Banning ip bans and prevents the user from joining back)
 				case "unban":
@@ -200,16 +215,33 @@ module.exports = {
 				  			.setColor(red)).then(del)
 				  	} else {
 				  		if (message.member.roles.some(Perm.isMod)) {
-				  				const fetched = await message.channel.fetchMessages({limit: deleteCount});
-				  			  message.channel.bulkDelete(fetched);
+				  			  const fetched = await message.channel.fetchMessages({limit: deleteCount});
 				  				message.channel.send(new Discord.RichEmbed()
-				  				.setTitle("MODERATION NOTICE")
-				  			  .setDescription(`DELETED [${deleteCount}] Total Messages`)
-				  				.setColor(purple)).then(del)
-				  				channel.send(new Discord.RichEmbed()
-				  				.setTitle("MODERATION NOTICE")
-				  			  .setDescription(`${message.author.toString()} has DELETED [${deleteCount}] Messages in ${message.channel.toString()}`)
-				  				.setColor(purple))
+				  				.setTitle("ACTION NEEDED")
+				  			  .setDescription(`Are you sure you want to delete [${deleteCount}] Total Messages in this Channel? \n You have 10 Seconds to decide or the command will CANCEL by itself`)
+				  				.setColor(purple)).then(async sentEmbed =>{sentEmbed.react("✅"); await sentEmbed.react("❌"); message.delete(10000);});
+				  				//
+				  				setTimeoutPromise(10000).then(async (message, reaction, emoji) => {
+				  					if (reaction.count = 2) {
+				  					  message.channel.bulkDelete(fetched);
+				  						message.channel.send(new Discord.RichEmbed()
+				  						.setTitle("MODERATION NOTICE")
+				  					  .setDescription(`DELETED [${deleteCount}] Total Messages`)
+				  						.setColor(purple)).then(async sentEmbed =>{sentEmbed.react("✅"); message.delete(10000);});
+				  						channel.send(new Discord.RichEmbed()
+				  						.setTitle("MODERATION NOTICE")
+				  					  .setDescription(`${message.author.toString()} has DELETED [${deleteCount}] Messages in ${message.channel.toString()}`)
+				  						.setColor(purple))				  					
+				  				  };
+				  				  if (reaction.count = 1) {
+				  				  		message.channel.send(new Discord.RichEmbed()
+				  				  		.setTitle("MODERATION NOTICE")
+				  				  	  .setDescription(`Command to delete [${deleteCount}] Total Messages has been CANCELED`)
+				  				  		.setColor(purple)).then(async sentEmbed =>{sentEmbed.react("❌"); message.delete(10000);});
+				  				  } else {
+				  				  	// didn't react so it should give a message saying Didn't confirm canceling command
+				  				  }
+				  			  });
 				  		} else {
 				  				message.channel.send(new Discord.RichEmbed()
 				  				.setTitle("CAUGHT ERROR!")
@@ -381,6 +413,7 @@ module.exports = {
 				default:message.channel.send(new Discord.RichEmbed().setTitle("ERROR!").setDescription("Unknown Command").setColor(red)).then(del);
 			}
 		}	catch (err) {
+			console.log(err);
 			message.channel.send(new Discord.RichEmbed()
 			.setTitle("CAUGHT ERROR!")
 			.setDescription(`${err}\n\n If this error persists then contact @Blaze#0666 or @Luke SwagWalker#1460`)
@@ -394,8 +427,67 @@ module.exports = {
 
 
 
-
-
+/*
+				case "ban":
+          if (!message.member.roles.some(Perm.isAdmin)) {
+          		delCmd;
+          		message.channel.send(new Discord.RichEmbed()
+          		.setTitle("ERROR!")
+          	  .setDescription("You are not an Admin!")
+          		.setColor(red)).then(del)
+          } else {
+          	delCmd;
+          	let member = message.mentions.members.first() || message.guild.members.get(args[0]);
+          	if (message.author.toString() === `<@${member.id}>`) {
+          			message.channel.send(new Discord.RichEmbed()
+          			.setTitle("ERROR!")
+          		  .setDescription(`You can't ban yourself!`)
+          			.setColor(red)).then(del)
+          			return;
+          	}
+          	if (!member) {
+          			message.channel.send(new Discord.RichEmbed()
+          			.setTitle("ERROR!")
+          		  .setDescription(`Can't find ${args[1]}. Are you typing it right? They may not be apart of the server`)
+          			.setColor(red)).then(del)
+          	} else {
+          		if (!member.bannable) {
+          				message.channel.send(new Discord.RichEmbed()
+          				.setTitle("ERROR!")
+          			  .setDescription(`I can't ban ${member} they have UNLIMITED POWER`)
+          				.setColor(red)).then(del)
+          		} else {
+          			let reason = args.slice(2).join(' ');
+          			if (!reason) {
+          					message.channel.send(new Discord.RichEmbed()
+          					.setTitle("ERROR!")
+          				  .setDescription(`Reason for ban is required. USAGE: !ban @Name Reason`)
+          					.setColor(red)).then(del);
+          			} else {
+          				if (member.ban) {
+          						let embed = new Discord.RichEmbed()
+          						.setTitle("ADMIN NOTICE")
+          					  .setDescription(`${message.author.toString()} has BANNED ${member.toString()} FOR: "${reason}"`)
+          						.setColor(red);
+          						message.channel.send(embed).then(del);
+          						channel.send(embed);
+          						let embedDm = new Discord.RichEmbed()
+          						.setTitle("Sorry... you were kicked from Drunk Squad Gaming")
+          					  .setDescription(`${message.author.toString()} has BANNED you FOR: "${reason}"`)
+          						.setColor(red);
+          						member.send(embedDM);
+          						setTimeoutPromise(2000).then((value)=>{member.ban(reason)}).catch(O_o=>{});
+          				} else {
+          						message.channel.send(new Discord.RichEmbed()
+          						.setTitle("CAUGHT ERROR!")
+          					  .setDescription(`${err}\n\n If this error persists then contact @Blaze#0666 or @Luke SwagWalker#1460`)
+          						.setColor(red)).then(del);
+          				}
+          			}
+          		}
+          	}
+          }
+				break;*/
 
 
 

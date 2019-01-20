@@ -12,18 +12,17 @@ const pink = 0xc842f4;
 const purple = 0x7f00ff;
 
 module.exports = {
-	onJoin: function(message, member){
-		let roleGuest = message.guild.roles.get(r => r.name === 'Guest');
-		let channel = message.guild.channels.find(ch => ch.name === 'user-join-leave');
-		let title1 = "Welcome to Drunk Squad Gaming!";
-		let desc1 = "Just a place holder";
-		message.send(new Discord.RichEmbed().setTitle(title1).setDescription(desc1).setColor(red));
-		let title2 = "New contender has arrived!";
-		let desc2 = `${member} Just joined the server there are [PLACE HOLDER USERS]`;
-		channel.send(new Discord.RichEmbed().setTitle(title2).setDescription(desc2).setColor(red));
-		member.addRole(roleGuest);
-	},
-	onMessage: function(){
-		// add moderation checks
+	onJoin: (member, send, message, channels, guild) => {
+		let roleGuest = member.guild.roles.find(r => r.name === config.joinRole);
+		let channel = member.guild.channels.find(ch => ch.name === config.joinNotify);
+			member.send(new Discord.RichEmbed()
+			.setTitle("Welcome to Drunk Squad Gaming!")
+		  .setDescription(`I'm a bot in development if you see this we haven't gotten this far on added a join message! Until then welcome!`))
+		  .setColor(green);
+		  channel.send(new Discord.RichEmbed()
+		  .setTitle("New Guest has arrived!")
+		  .setDescription(`${member} Just joined the server there are [PLACE HOLDER USERS]`))
+		  .setColor(green);
+		  member.addRole(roleGuest);
 	}
 }
