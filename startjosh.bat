@@ -1,1 +1,1 @@
-cmd /K "cd C:\Users\joshr\Desktop\DiscordBot\js"
+cmd /K "cd C:\Users\joshr\Desktop\DBot-Stable"
