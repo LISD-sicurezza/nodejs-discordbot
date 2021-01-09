@@ -1,5 +1,5 @@
 {
-"token": "NTMzNzQyNzI0NTI0ODAyMDY0.Dxvkpg.hSAt-oGv3nxSZ7kE2B_d7hLMogk",
+"token": "",
 "online": "!commands VER .5.08",
 "prefix": "!",
 "joinRole": "Guest",
@@ -7,21 +7,5 @@
 "leaveNotify": "user-join-leave",
 "staffNotify": "mod-action",
 "supportNotify": "mod-action",
-"blacklist": [
-	"nigger",
-	"nigg3r",
-	"n1gger",
-	"n1gg3r",
-	"nigr",
-	"niggr",
-	"niggur",
-	"nigguur",
-	"n1ggr",
-	"chink",
-	"ch1nk",
-	"beaner",
-	"b3aner",
-	"faggot",
-	"fag"
-]
+"blacklist": ["fag"]
 }
