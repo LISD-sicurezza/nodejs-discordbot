@@ -1,7 +1,7 @@
 {
-"token": "",
+"token": "ODc4MjQ1NDc1NTIwNzc0MTg0.YR-X1g.Zn1OX4YiPvbqFB3U6DBlgLxY2xc",
 "online": "!commands VER .5.08",
-"prefix": "!",
+"prefix": "?",
 "joinRole": "Guest",
 "joinNotify": "user-join-leave",
 "leaveNotify": "user-join-leave",
